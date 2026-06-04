@@ -19,6 +19,17 @@ DYN_EFFECTS = {
     (1, 13): "Gate 2",
     (2, 1): "Gate 3",
 }
+FREQ_EFFECTS = {
+    (1, 9): "FILTER",
+    (2, 1): "OCTAVER",
+    (2, 3): "DUAL MELODY",
+    (2, 4): "PITCH",
+    (4, 14): "HARMONY D",
+
+    (5, 5): "PITCH S",
+    (2, 15): "RING MOD",
+    (3, 3): "TAPE MOD",
+}
 
 
 def decode_preset(data):
@@ -47,6 +58,7 @@ def decode_preset(data):
 
 
 def decode_effect_model(data):
+    # DYN padrão
     if len(data) == 108 and data[8] == 48:
         effect_key = (data[58], data[59])
         effect_name = DYN_EFFECTS.get(effect_key)
@@ -54,6 +66,18 @@ def decode_effect_model(data):
         return {
             "type": "effect_model",
             "category": "DYN",
+            "effect_key": effect_key,
+            "effect_name": effect_name,
+        }
+
+    # FREQ
+    if len(data) == 128 and data[8] == 58:
+        effect_key = (data[60], data[61])
+        effect_name = FREQ_EFFECTS.get(effect_key)
+
+        return {
+            "type": "effect_model",
+            "category": "FREQ",
             "effect_key": effect_key,
             "effect_name": effect_name,
         }
