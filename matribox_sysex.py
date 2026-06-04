@@ -192,7 +192,84 @@ CAB_EFFECTS = {
     (4, 4): "FRETLESS BASS",
     (4, 5): "DOUBLE BASS",
 }
+EQ_EFFECTS = {
+    (3, 5): "GUITAR EQ 1",
+    (3, 6): "GUITAR EQ 2",
+    (3, 9): "BASS EQ 1",
+    (3, 10): "BASS EQ 2",
+    (3, 12): "CALIF EQ",
+}
+MOD_EFFECTS = {
+    (0, 1): "E-CHORUS",
+    (0, 2): "D-CHORUS",
+    (0, 8): "B-CHORUS",
+    (0, 15): "M-CHORUS",
+    (1, 1): "FLANGER",
+    (1, 3): "FLANGER N",
+    (1, 4): "TREM JET",
+    (1, 2): "BASS JET",
+    (1, 7): "VIBRATO",
+    (1, 5): "BBD ROTO",
+    (1, 6): "CE-ROTO",
+    (1, 9): "PHASER",
+    (1, 10): "BBD PHASER",
+    (1, 11): "PHASER ST",
+    (1, 14): "PAN PHASER",
+    (1, 15): "VIBE",
+    (2, 0): "U-VIBE",
+    (2, 1): "TREMOLO",
+    (2, 6): "SINE TREM",
+    (2, 7): "TRIANGULE TREM",
+    (2, 8): "BIAS TREM",
+    (2, 9): "DETUNE",
+    (2, 14): "LOFI BIT",
+}
+DLY_EFFECTS = {
+    (0, 1): "WARM",
+    (0, 0): "PURE",
+    (0, 2): "MAG",
+    (1, 13): "BBD",
+    (0, 4): "PING PONG",
+    (0, 5): "SLAPBACK",
+    (0, 6): "SWEEP",
+    (0, 9): "RING",
+    (0, 12): "MULTI TAPE",
+    (0, 13): "SWEET",
+    (1, 2): "999 ECHO",
+    (1, 4): "RACK",
+    (2, 6): "LO-FI",
+    (2, 8): "REVERSE",
+    (0, 3): "EKO D",
+    (2, 12): "ICE DELAY",
+}
+REV_EFFECTS = {
+    (0, 11): "STUDIO",
+    (0, 12): "CLUB",
+    (0, 0): "ROOM",
+    (0, 1): "HALL",
+    (0, 2): "CHURCH",
+    (0, 3): "PLATE",
+    (0, 4): "SPRING",
+    (0, 6): "SKY",
+    (0, 7): "SEA",
+    (0, 8): "MOD REVERB",
+    (0, 9): "SHIMMER",
+    (1, 5): "HAZE",
+}
+FX_EFFECTS = {
+    (0, 0): "FX LOOP",
+}
 
+SND_EFFECTS = {
+    (0, 1): "SND",
+}
+
+RTN_EFFECTS = {
+    (0, 2): "RTN",
+}
+VOL_EFFECTS = {
+    (0, 3): "VOLUME",
+}
 def decode_preset(data):
     if len(data) < 40:
         return None
@@ -256,6 +333,48 @@ def decode_effect_model(data):
         elif category_id == 5:
            category = "CAB"
            effect_name = CAB_EFFECTS.get(effect_key)
+
+        elif category_id == 6:
+           category = "IR"
+           ir_number = (data[60] * 16) + data[61] + 1
+           effect_name = f"IR {ir_number}"
+
+        elif category_id == 7:
+           category = "EQ"
+           effect_name = EQ_EFFECTS.get(effect_key)
+
+        elif category_id == 8:
+           category = "MOD"
+           effect_name = MOD_EFFECTS.get(effect_key)
+
+        elif category_id == 9:
+           category = "DLY"
+           effect_name = DLY_EFFECTS.get(effect_key)
+
+        elif category_id == 10:
+           category = "REV"
+           effect_name = REV_EFFECTS.get(effect_key)
+
+        elif category_id == 11:
+           category = "CLONE"
+           clone_number = (data[60] * 16) + data[61] + 1
+           effect_name = f"CLONE {clone_number}"
+
+        elif category_id == 12:
+           category = "FX"
+           effect_name = FX_EFFECTS.get(effect_key)
+
+        elif category_id == 13:
+           category = "SND"
+           effect_name = SND_EFFECTS.get(effect_key)
+
+        elif category_id == 14:
+           category = "RTN"
+           effect_name = RTN_EFFECTS.get(effect_key)
+
+        elif category_id == 15:
+           category = "VOL"
+           effect_name = VOL_EFFECTS.get(effect_key)
 
         else:
             category = f"UNKNOWN_CATEGORY_{category_id}"
