@@ -1,0 +1,444 @@
+VALIDADO NA MATRIBOX II PRO
+
+CC29 = 0  → Preset Mode
+CC29 = 64 → Stomp Mode
+
+Manual aparentemente invertido ou ambíguo.
+
+
+
+# Matribox II Pro - Documentação MIDI Validada
+
+## Ambiente
+
+### Python
+
+Versão utilizada:
+
+```text
+Python 3.12.0
+```
+
+### Bibliotecas
+
+```bash
+pip install mido python-rtmidi
+```
+
+### Porta MIDI
+
+Detectada como:
+
+```text
+Matribox II Pro Subdevice 1
+```
+
+---
+
+# Arquitetura do Projeto
+
+## matribox_core.py
+
+Responsável apenas por comunicação MIDI.
+
+Funções:
+
+* send_cc()
+* send_pc()
+* go_to_preset()
+* set_stomp_mode()
+* set_preset_mode()
+* ctrl()
+* module_on()
+* module_off()
+* tuner_on()
+* tuner_off()
+* set_bpm()
+* close()
+
+---
+
+## matribox_state.py
+
+Responsável por armazenar o estado interno do software.
+
+Armazena:
+
+* banco atual
+* preset atual
+* modo atual
+* estado dos módulos
+* estado do afinador
+
+Importante:
+
+O state NÃO lê informações da pedaleira.
+
+Ele apenas mantém o estado conhecido pelo software.
+
+---
+
+## matribox_controller.py
+
+Camada intermediária.
+
+Responsável por:
+
+* atualizar state
+* chamar core
+* abstrair a lógica da aplicação
+
+Fluxo:
+
+GUI → Controller → Core → MIDI
+
+---
+
+# Estrutura dos Presets
+
+A Matribox possui:
+
+```text
+60 bancos
+4 presets por banco
+```
+
+Presets:
+
+```text
+A
+B
+C
+D
+```
+
+Total:
+
+```text
+240 presets
+```
+
+Exemplo:
+
+```text
+01A
+01B
+01C
+01D
+
+02A
+02B
+02C
+02D
+
+...
+
+60A
+60B
+60C
+60D
+```
+
+---
+
+# Seleção MIDI de Presets
+
+Utiliza:
+
+```text
+CC0
+Program Change
+```
+
+## Bancos 01 a 30
+
+```text
+CC0 = 0
+PC = 1 até 120
+```
+
+## Bancos 31 a 60
+
+```text
+CC0 = 1
+PC = 1 até 120
+```
+
+Fórmula validada:
+
+```python
+pc = ((bank_inside_group - 1) * 4) + letter_index + 1
+```
+
+---
+
+# Modos
+
+CC:
+
+```text
+CC29
+```
+
+Comportamento validado na unidade física:
+
+```text
+CC29 = 0
+→ STOMP MODE
+
+CC29 = 64
+→ PRESET MODE
+```
+
+Implementação:
+
+```python
+set_stomp_mode()
+set_preset_mode()
+```
+
+---
+
+# CTRLs
+
+Funções:
+
+```text
+CTRL1
+CTRL2
+CTRL3
+CTRL4
+```
+
+MIDI:
+
+```text
+CC71 = CTRL1
+CC72 = CTRL2
+CC73 = CTRL3
+CC74 = CTRL4
+```
+
+Importante:
+
+Os CTRLs NÃO representam efeitos específicos.
+
+Eles executam as funções configuradas pelo usuário dentro do preset.
+
+Exemplo:
+
+Preset 01C:
+
+CTRL1 = Overdrive
+CTRL2 = Cab
+CTRL3 = Reverb
+CTRL4 = Delay
+
+Outro preset pode possuir funções completamente diferentes.
+
+---
+
+# Controle Direto dos Blocos
+
+Validado em hardware.
+
+CCs:
+
+```text
+CC43 = Bloco 1
+CC44 = Bloco 2
+CC45 = Bloco 3
+CC46 = Bloco 4
+CC47 = Bloco 5
+CC48 = Bloco 6
+CC49 = Bloco 7
+CC50 = Bloco 8
+CC51 = Bloco 9
+CC52 = Bloco 10
+CC53 = Bloco 11
+CC54 = Bloco 12
+```
+
+Valores:
+
+```text
+0   = OFF
+127 = ON
+```
+
+Importante:
+
+O controle é feito pela POSIÇÃO do bloco na cadeia.
+
+Não pelo tipo do efeito.
+
+Exemplos:
+
+```text
+Bloco 1 = Compressor
+Bloco 1 = Amp
+Bloco 1 = Delay
+```
+
+Sempre será controlado por:
+
+```text
+CC43
+```
+
+---
+
+# Afinador
+
+CC:
+
+```text
+CC58
+```
+
+Valores:
+
+```text
+0   = OFF
+127 = ON
+```
+
+Validado.
+
+---
+
+# BPM Direto
+
+CCs:
+
+```text
+CC68
+CC69
+```
+
+Faixas:
+
+```text
+40 a 127 BPM
+CC68 = 0
+CC69 = valor BPM
+```
+
+```text
+128 a 255 BPM
+CC68 = 1
+CC69 = BPM - 128
+```
+
+```text
+256 a 300 BPM
+CC68 = 2
+CC69 = BPM - 256
+```
+
+Validado.
+
+Mudança instantânea.
+
+Não necessita troca de preset.
+
+---
+
+# Tap Tempo
+
+CC:
+
+```text
+CC70
+```
+
+Valor:
+
+```text
+127
+```
+
+Validado.
+
+O BPM é calculado pelo intervalo entre os taps.
+
+Fórmula:
+
+```python
+intervalo = 60 / bpm
+```
+
+Exemplos:
+
+```text
+60 BPM  = 1.000 s
+120 BPM = 0.500 s
+180 BPM = 0.333 s
+```
+
+---
+
+# Descobertas Importantes
+
+1. O comportamento real da unidade é mais confiável que o manual.
+
+2. CC29 apresentou comportamento invertido em relação à interpretação inicial.
+
+3. Os blocos 1-12 são indexados pela posição na cadeia.
+
+4. O software atualmente envia comandos MIDI mas não recebe o estado real da pedaleira.
+
+5. O estado exibido na aplicação deve ser tratado como estado conhecido pelo software e não necessariamente como estado real do hardware.
+
+---
+
+# Funcionalidades Ainda Não Testadas
+
+Looper:
+
+```text
+CC59
+CC60
+CC61
+CC62
+CC63
+CC64
+CC65
+CC66
+CC67
+```
+
+Drum Machine:
+
+```text
+CC92
+CC93
+CC94
+CC95
+```
+
+Quick Access Knobs:
+
+```text
+CC16
+CC17
+CC18
+CC19
+CC20
+CC21
+```
+
+Expression:
+
+```text
+CC11
+CC13
+```
+
+Volume:
+
+```text
+CC7
+```
+
+

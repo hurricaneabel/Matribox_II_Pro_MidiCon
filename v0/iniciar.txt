@@ -1,0 +1,3 @@
+cd /d C:\matriboxcontroller
+call venv\Scripts\activate.bat
+
