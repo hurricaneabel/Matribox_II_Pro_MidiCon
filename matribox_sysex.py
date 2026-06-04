@@ -129,6 +129,69 @@ AMP_EFFECTS = {
     (7, 10): "AC PREAMP",
     (7, 11, 8): "AC PREAMP2",
 }
+CAB_EFFECTS = {
+    (0, 0): "SUPERO 1x6",
+    (0, 1): "CHAP 1x8",
+    (0, 2): "PRINCE 1x10",
+    (1, 4): "TWD 2X10",
+    (0, 11): "TWD LUX 1X12",
+    (0, 3): "DARK LUX 1X12",
+    (1, 2): "TWIN VERB 2X12",
+    (1, 11): "CUSTOM 2X12",
+    (1, 6): "BMAN 2X10",
+    (1, 14): "BMAN 4X10",
+    (1, 1): "JAZZ 2X12",
+    (0, 14): "BRIT 1X12",
+    (1, 3): "BRIT GN 2X12",
+    (1, 15): "BRIT LD 4X12",
+    (2, 0): "BRIT TD 4X12",
+    (2, 1): "BRIT MD 4X12",
+    (2, 2): "BRIT GN 4X12",
+    (3, 0): "BRIT 75 4X12",
+    (2, 11): "BRIT BK 4X12",
+    (0, 8): "VOKS 1X12",
+    (0, 15): "VOKS 2X12",
+    (0, 6): "BOG SV 1X12",
+    (1, 0): "CHIEF 2X12",
+    (2, 4): "CALIF DUAL 4X12",
+    (0, 9): "CALIF STAR 1X12",
+    (1, 9): "CALIF STAR 2X12",
+    (0, 12): "CALIF 1X12",
+    (1, 7): "SUPERO 2X12",
+    (1, 8): "SUPERB 2X12",
+    (1, 13): "BLUE 2X12",
+    (2, 3): "HALEN 4X12",
+    (2, 5): "BOG 4X12",
+    (2, 6): "ENG 4X12",
+    (2, 7): "BOG UB 4X12",
+    (2, 8): "SOL 4X12",
+    (2, 9): "TANGER 4X12",
+    (2, 10): "WATT 4X12",
+    (2, 12): "WAM 4X12",
+    (2, 13): "HUMBLE 4X12",
+    (2, 14): "DIZZY 4X12",
+    (3, 1): "CALIF 4X12",
+    (3, 2): "DV 1X15",
+    (3, 7): "DV 4X10",
+    (3, 3): "WORK 1X15",
+    (3, 9): "WORK 4X10",
+    (3, 5): "CALIF 2X10",
+    (3, 6): "MAK 2X10",
+    (3, 4): "A BASS 1X15",
+    (3, 8): "A BASS 4X10",
+    (3, 11): "A BASS 8X10",
+    (3, 10): "HART 4X12",
+    (3, 12): "D 1",
+    (3, 13): "D 2",
+    (3, 14): "OM",
+    (3, 15): "JUMBO",
+    (4, 0): "BIRD",
+    (4, 1): "GA",
+    (4, 2): "CLASSICAL AC",
+    (4, 3): "MANDOLIN",
+    (4, 4): "FRETLESS BASS",
+    (4, 5): "DOUBLE BASS",
+}
 
 def decode_preset(data):
     if len(data) < 40:
@@ -189,6 +252,10 @@ def decode_effect_model(data):
             category = "AMP"
             effect_key = (data[60], data[61], data[67])
             effect_name = AMP_EFFECTS.get(effect_key)
+
+        elif category_id == 5:
+           category = "CAB"
+           effect_name = CAB_EFFECTS.get(effect_key)
 
         else:
             category = f"UNKNOWN_CATEGORY_{category_id}"
