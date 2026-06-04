@@ -64,6 +64,71 @@ DRV_EFFECTS = {
     (3, 15): "BASS OD",
     (4, 0): "BASS DIST",
 }
+AMP_EFFECTS = {
+    (0, 1): "TWD DELUXE",
+    (0, 3): "B-MAN N",
+    (2, 4): "B-MAN BRI",
+    (0, 4): "DARK DOUBLE",
+    (0, 5): "DARK DELUXE",
+    (0, 15): "SUPERO 2 CL",
+    (2, 8): "SUPERO 2 OD",
+    (1, 0): "VOKS 15TB",
+    (1, 1): "VOKS 30N",
+    (2, 7): "VOKS 30TB",
+    (1, 4): "JAZZ 120",
+    (1, 5): "SUPERB CL",
+    (4, 8): "SUPERB OD",
+    (1, 9): "CALIF STAR CL",
+    (4, 10): "CALIF STAR OD",
+    (1, 10): "BOG SV CL",
+    (3, 13): "BOG SV OD",
+    (4, 3): "BOG XT BLUE",
+    (6, 14): "BOG XT RED",
+    (1, 11): "DOCTOR CL",
+    (4, 9): "DOCTOR OD",
+    (1, 15): "DRAGON CL",
+    (7, 11, 7): "DRAGON CL B",
+    (7, 12): "DRAGON OD",
+    (2, 3): "SOL 100 CL",
+    (4, 7): "SOL 100 OD",
+    (5, 9): "SOL 100 LD",
+    (2, 10): "BRIT 45",
+    (2, 11): "BRIT 45+",
+    (2, 12): "BRIT 45 JP",
+    (2, 13): "BRIT 50",
+    (2, 14): "BRIT 50+",
+    (2, 15): "BRIT 50JP",
+    (3, 0): "BRIT SLP",
+    (3, 5): "BRIT 800",
+    (4, 14): "BRIT 900",
+    (4, 0): "FLYMAN 1",
+    (4, 1): "FLYMAN 2",
+    (5, 13): "FLYMAN+ 1",
+    (5, 14): "FLYMAN+ 2",
+    (3, 9): "CALIF IIC+ 1",
+    (3, 10): "CALIF IIC+ 2",
+    (3, 11): "CALIF IIC+ 3",
+    (5, 5): "CALIF IV LD 1",
+    (5, 6): "CALIF IV LD 2",
+    (5, 7): "CALIF IV LD 3",
+    (6, 8): "CALIF DUAL V",
+    (6, 9): "CALIF DUAL M",
+    (5, 3): "TANGER R100",
+    (5, 10): "HALEN 51",
+    (5, 15): "ENG 120",
+    (6, 0): "ENG 120+",
+    (6, 5): "DIZZY VH",
+    (6, 6): "DIZZY VH S",
+    (6, 10): "DIZZY VH+",
+    (6, 11): "DIZZY VH+ S",
+    (7, 3): "A BASSVT",
+    (7, 5, 7): "VOKS BASS",
+    (7, 7): "CALIF BASS",
+    (7, 5, 8): "A BASSFT",
+    (7, 6): "F-2BASS",
+    (7, 10): "AC PREAMP",
+    (7, 11, 8): "AC PREAMP2",
+}
 
 def decode_preset(data):
     if len(data) < 40:
@@ -119,6 +184,11 @@ def decode_effect_model(data):
         elif category_id == 3:
             category = "DRV"
             effect_name = DRV_EFFECTS.get(effect_key)
+
+        elif category_id == 4:
+            category = "AMP"
+            effect_key = (data[60], data[61], data[67])
+            effect_name = AMP_EFFECTS.get(effect_key)
 
         else:
             category = f"UNKNOWN_CATEGORY_{category_id}"
