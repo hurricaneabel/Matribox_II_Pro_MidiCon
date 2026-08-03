@@ -1,8 +1,11 @@
 """
 Monitor temporário das mensagens MIDI enviadas pela Matribox II Pro.
 
-O programa escuta a porta MIDI de entrada durante 15 segundos e exibe
-qualquer mensagem recebida. Depois desse período, encerra automaticamente.
+O programa escuta a porta MIDI de entrada durante 15 segundos.
+
+Os pulsos contínuos de MIDI Clock são contabilizados, mas não são exibidos,
+para não encher o terminal e esconder mensagens importantes como SysEx,
+Control Change ou Program Change.
 """
 
 from __future__ import annotations
@@ -25,7 +28,7 @@ def find_matribox_input() -> str:
 
     Raises:
         RuntimeError:
-            Quando nenhuma porta correspondente é encontrada.
+            Quando nenhuma porta correspondente à Matribox é encontrada.
     """
     for port_name in mido.get_input_names():
         if DEVICE_NAME.casefold() in port_name.casefold():
@@ -37,39 +40,67 @@ def find_matribox_input() -> str:
 
 
 def format_bytes(message: mido.Message) -> str:
-    """Converte os bytes MIDI para representação hexadecimal."""
+    """
+    Converte os bytes da mensagem MIDI para formato hexadecimal.
+
+    Exemplo:
+        Uma mensagem SysEx poderá aparecer como:
+        F0 21 25 4D 50 ... F7
+    """
     return " ".join(f"{byte:02X}" for byte in message.bytes())
 
 
 def main() -> None:
-    """Monitora as mensagens MIDI por um período limitado."""
+    """
+    Monitora as mensagens MIDI durante um período limitado.
+
+    Mensagens MIDI Clock são ignoradas visualmente porque chegam muitas
+    vezes por segundo. Todas as outras mensagens são mostradas no terminal.
+    """
     port_name = find_matribox_input()
+
     received_messages = 0
+    clock_messages = 0
     end_time = time.monotonic() + MONITOR_TIME_SECONDS
 
     print(f"Escutando: {port_name}")
     print(f"O monitor encerrará em {MONITOR_TIME_SECONDS} segundos.")
-    print("Agora marque e desmarque o Drum Sync na pedaleira.\n")
+    print("Marque e desmarque somente o Drum Sync na pedaleira.")
+    print("Os pulsos de MIDI Clock não serão exibidos.\n")
 
-    with mido.open_input(port_name) as input_port:
-        while time.monotonic() < end_time:
-            for message in input_port.iter_pending():
-                received_messages += 1
+    try:
+        with mido.open_input(port_name) as input_port:
+            while time.monotonic() < end_time:
+                for message in input_port.iter_pending():
+                    if message.type == "clock":
+                        clock_messages += 1
+                        continue
 
-                print(
-                    f"Mensagem: {message} "
-                    f"| Bytes: {format_bytes(message)}",
-                    flush=True,
-                )
+                    received_messages += 1
 
-            time.sleep(0.01)
+                    print(
+                        f"Mensagem: {message} "
+                        f"| Bytes: {format_bytes(message)}",
+                        flush=True,
+                    )
+
+                time.sleep(0.01)
+
+    except KeyboardInterrupt:
+        print("\nMonitor interrompido pelo usuário.")
+
+    print()
 
     if received_messages == 0:
-        print("Nenhuma mensagem MIDI foi recebida.")
+        print("Nenhuma mensagem além do MIDI Clock foi recebida.")
     else:
-        print(f"\nTotal de mensagens recebidas: {received_messages}")
+        print(
+            "Total de mensagens diferentes de MIDI Clock: "
+            f"{received_messages}"
+        )
 
-    print("Monitor MIDI encerrado automaticamente.")
+    print(f"Pulsos de MIDI Clock ignorados: {clock_messages}")
+    print("Monitor MIDI encerrado.")
 
 
 if __name__ == "__main__":

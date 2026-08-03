@@ -469,6 +469,70 @@ class MatriboxController:
             SwitchValue.ON,
         )
 
+    def drum_menu_on(self) -> None:
+        """Abre o menu da bateria eletrônica."""
+        self._midi_output.send_control_change(
+            ControlChange.DRUM_MENU,
+            SwitchValue.ON,
+        )
+
+    def drum_menu_off(self) -> None:
+        """Fecha o menu da bateria eletrônica."""
+        self._midi_output.send_control_change(
+            ControlChange.DRUM_MENU,
+            SwitchValue.OFF,
+        )
+
+    def drum_play(self) -> None:
+        """Inicia a reprodução da bateria eletrônica."""
+        self._midi_output.send_control_change(
+            ControlChange.DRUM_PLAY_STOP,
+            SwitchValue.ON,
+        )
+
+    def drum_stop(self) -> None:
+        """Interrompe a reprodução da bateria eletrônica."""
+        self._midi_output.send_control_change(
+            ControlChange.DRUM_PLAY_STOP,
+            SwitchValue.OFF,
+        )
+
+    def set_drum_rhythm(self, rhythm: int) -> None:
+        """
+        Seleciona o ritmo da bateria eletrônica.
+
+        Args:
+            rhythm:
+                Número do ritmo, entre 0 e 99.
+        """
+        if not 0 <= rhythm <= 99:
+            raise ValueError(
+                "O ritmo da bateria deve estar entre 0 e 99."
+            )
+
+        self._midi_output.send_control_change(
+            ControlChange.DRUM_RHYTHM,
+            rhythm,
+        )
+
+    def set_drum_volume(self, volume: int) -> None:
+        """
+        Define o volume da bateria eletrônica.
+
+        Args:
+            volume:
+                Volume entre 0 e 100.
+        """
+        if not 0 <= volume <= 100:
+            raise ValueError(
+                "O volume da bateria deve estar entre 0 e 100."
+            )
+
+        self._midi_output.send_control_change(
+            ControlChange.DRUM_VOLUME,
+            volume,
+        )
+
     def tuner_on(self) -> None:
         """Liga o afinador da Matribox II Pro."""
         self._midi_output.send_control_change(

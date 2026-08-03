@@ -38,6 +38,10 @@ class ControlChange(IntEnum):
     LOOPER_RECORDING_VOLUME = 65
     LOOPER_PLAYBACK_VOLUME = 66
     LOOPER_PLACEMENT = 67
+    DRUM_MENU = 92
+    DRUM_PLAY_STOP = 93
+    DRUM_RHYTHM = 94
+    DRUM_VOLUME = 95
     TUNER = 58
 
 class StompControl(IntEnum):
@@ -99,7 +103,7 @@ class LooperPlacementValue(IntEnum):
     """
 
     POST = 0
-    PRE = 127
+    PRE = 127   
 
 class SwitchValue(IntEnum):
     """
