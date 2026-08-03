@@ -163,6 +163,66 @@ def control_quick_access(controller: MatriboxController) -> None:
         controller.decrease_quick_access_knob(knob)
         print(f"Knob {knob} diminuído em 1 passo.")
 
+def control_drums(controller: MatriboxController) -> None:
+    """Controla as principais funções da bateria eletrônica."""
+    print()
+    print("=== Bateria eletrônica ===")
+    print("1 - Abrir menu da bateria")
+    print("2 - Fechar menu da bateria")
+    print("3 - Iniciar reprodução")
+    print("4 - Parar reprodução")
+    print("5 - Selecionar ritmo")
+    print("6 - Ajustar volume")
+    print("0 - Voltar")
+
+    option = input("Escolha uma opção: ").strip()
+
+    if option == "0":
+        return
+
+    if option == "1":
+        controller.drum_menu_on()
+        print("Menu da bateria aberto.")
+
+    elif option == "2":
+        controller.drum_menu_off()
+        print("Menu da bateria fechado.")
+
+    elif option == "3":
+        controller.drum_play()
+        print("Bateria iniciada.")
+
+    elif option == "4":
+        controller.drum_stop()
+        print("Bateria interrompida.")
+
+    elif option == "5":
+        try:
+            rhythm = int(
+                input("Digite o ritmo, entre 0 e 99: ").strip()
+            )
+            controller.set_drum_rhythm(rhythm)
+        except ValueError as error:
+            print(f"Erro: {error}")
+            return
+
+        print(f"Ritmo da bateria definido para {rhythm}.")
+
+    elif option == "6":
+        try:
+            volume = int(
+                input("Digite o volume, entre 0 e 100: ").strip()
+            )
+            controller.set_drum_volume(volume)
+        except ValueError as error:
+            print(f"Erro: {error}")
+            return
+
+        print(f"Volume da bateria definido para {volume}.")
+
+    else:
+        print("Opção inválida.")
+
 def main() -> None:
     """Conecta à Matribox e executa o menu principal."""
     try:
@@ -197,7 +257,12 @@ def main() -> None:
                 elif option == "5":
                     control_quick_access(controller)
 
-                elif option in {"6", "7"}:
+                elif option == "6":
+                    control_drums(controller) 
+
+                
+
+                elif option in {"7"}:
                     print(
                         "Essa opção será conectada "
                         "nas próximas etapas."
