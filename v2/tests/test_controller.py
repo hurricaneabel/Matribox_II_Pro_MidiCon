@@ -356,5 +356,78 @@ class TestLooperControls(unittest.TestCase):
             LooperPlacementValue.POST,
         )
 
+class TestDrumControls(unittest.TestCase):
+    """Testa os controles da bateria eletrônica."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_opens_drum_menu(self) -> None:
+        """Abre o menu da bateria."""
+        self.controller.drum_menu_on()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.DRUM_MENU,
+            SwitchValue.ON,
+        )
+
+    def test_closes_drum_menu(self) -> None:
+        """Fecha o menu da bateria."""
+        self.controller.drum_menu_off()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.DRUM_MENU,
+            SwitchValue.OFF,
+        )
+
+    def test_starts_drum_playback(self) -> None:
+        """Inicia a reprodução da bateria."""
+        self.controller.drum_play()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.DRUM_PLAY_STOP,
+            SwitchValue.ON,
+        )
+
+    def test_stops_drum_playback(self) -> None:
+        """Interrompe a reprodução da bateria."""
+        self.controller.drum_stop()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.DRUM_PLAY_STOP,
+            SwitchValue.OFF,
+        )
+
+    def test_sets_drum_rhythm(self) -> None:
+        """Seleciona um ritmo entre 0 e 99."""
+        self.controller.set_drum_rhythm(50)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.DRUM_RHYTHM,
+            50,
+        )
+
+    def test_rejects_invalid_drum_rhythm(self) -> None:
+        """Rejeita ritmos acima de 99."""
+        with self.assertRaises(ValueError):
+            self.controller.set_drum_rhythm(100)
+
+    def test_sets_drum_volume(self) -> None:
+        """Define o volume da bateria."""
+        self.controller.set_drum_volume(70)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.DRUM_VOLUME,
+            70,
+        )
+
+    def test_rejects_invalid_drum_volume(self) -> None:
+        """Rejeita volume acima de 100."""
+        with self.assertRaises(ValueError):
+            self.controller.set_drum_volume(101)
+
 if __name__ == "__main__":
     unittest.main()
