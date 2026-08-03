@@ -18,6 +18,9 @@ class ControlChange(IntEnum):
     Controles MIDI gerais reconhecidos pela Matribox II Pro.
     """
     BANK_SELECT = 0
+    PRESET_VOLUME = 7
+    EXPRESSION = 11
+    EXPRESSION_1_A_B = 13
     TUNER = 58
 
 

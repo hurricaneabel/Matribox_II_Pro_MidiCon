@@ -131,6 +131,70 @@ class MatriboxController:
 
         self.select_program(program)       
 
+    def set_preset_volume(self, volume: int) -> None:
+        """
+        Define o volume do preset atual.
+
+        Args:
+            volume:
+                Valor do volume MIDI, entre 0 e 127.
+
+                0 representa o volume mínimo.
+                127 representa o volume máximo.
+
+        Raises:
+            ValueError:
+                Quando o volume está fora do intervalo permitido.
+        """
+        if not 0 <= volume <= 127:
+            raise ValueError(
+                "O volume do preset deve estar entre 0 e 127."
+            )
+
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_VOLUME,
+            volume,
+        )
+
+    def set_expression(self, value: int) -> None:
+        """
+        Define o valor do controle de expressão do preset atual.
+
+        Args:
+            value:
+                Valor MIDI entre 0 e 127.
+
+                O efeito produzido depende de qual parâmetro está associado
+                ao pedal de expressão dentro do preset atual.
+
+        Raises:
+            ValueError:
+                Quando o valor está fora do intervalo permitido.
+        """
+        if not 0 <= value <= 127:
+            raise ValueError(
+                "O valor de expressão deve estar entre 0 e 127."
+            )
+
+        self._midi_output.send_control_change(
+            ControlChange.EXPRESSION,
+            value,
+        )
+
+    def select_expression_a(self) -> None:
+        """Seleciona a configuração A do pedal de expressão interno."""
+        self._midi_output.send_control_change(
+            ControlChange.EXPRESSION_1_A_B,
+            SwitchValue.OFF,
+        )
+
+    def select_expression_b(self) -> None:
+        """Seleciona a configuração B do pedal de expressão interno."""
+        self._midi_output.send_control_change(
+            ControlChange.EXPRESSION_1_A_B,
+            SwitchValue.ON,
+        )                
+
     def tuner_on(self) -> None:
         """Liga o afinador da Matribox II Pro."""
         self._midi_output.send_control_change(
