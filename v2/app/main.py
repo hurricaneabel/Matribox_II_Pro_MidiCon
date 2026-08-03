@@ -66,6 +66,48 @@ def adjust_volume(controller: MatriboxController) -> None:
 
     print(f"Volume do preset definido para {volume}.")
 
+def define_bpm(controller: MatriboxController) -> None:
+    """Solicita e define o BPM do preset atual."""
+    try:
+        bpm = int(
+            input("Digite o BPM, entre 40 e 300: ").strip()
+        )
+    except ValueError:
+        print("BPM inválido. Digite apenas um número.")
+        return
+
+    try:
+        controller.set_bpm(bpm)
+    except ValueError as error:
+        print(f"Erro: {error}")
+        return
+
+    print(f"BPM definido para {bpm}.")
+
+def control_tuner(controller: MatriboxController) -> None:
+    """Permite ligar ou desligar o afinador."""
+    print()
+    print("=== Afinador ===")
+    print("1 - Ligar")
+    print("2 - Desligar")
+    print("0 - Voltar")
+
+    option = input("Escolha uma opção: ").strip()
+
+    if option == "1":
+        controller.tuner_on()
+        print("Afinador ligado.")
+
+    elif option == "2":
+        controller.tuner_off()
+        print("Afinador desligado.")
+
+    elif option == "0":
+        return
+
+    else:
+        print("Opção inválida.")
+
 def main() -> None:
     """Conecta à Matribox e executa o menu principal."""
     try:
@@ -91,7 +133,15 @@ def main() -> None:
                 if option == "2":
                     adjust_volume(controller)    
 
-                elif option in {"3", "4", "5", "6", "7"}:
+                if option == "3":
+                    define_bpm(controller)
+
+                if option == "4":
+                    control_tuner(controller)
+
+                
+
+                elif option in {"5", "6", "7"}:
                     print(
                         "Essa opção será conectada "
                         "nas próximas etapas."
