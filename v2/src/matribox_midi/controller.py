@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from types import TracebackType
 
-from .commands import ControlChange, EffectModule, SwitchValue
+from .commands import ControlChange, EffectModule, OperatingModeValue, SwitchValue
 from .midi_output import MatriboxMidiOutput
 
 
@@ -194,6 +194,30 @@ class MatriboxController:
             ControlChange.EXPRESSION_1_A_B,
             SwitchValue.ON,
         )                
+
+    def preset_mode(self) -> None:
+        """
+        Ativa o modo Preset da Matribox II Pro.
+
+        Nesse modo, os quatro footswitches principais selecionam
+        os presets A, B, C e D do banco atual.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_STOMP_MODE,
+            OperatingModeValue.PRESET,
+        )
+
+    def stomp_mode(self) -> None:
+        """
+        Ativa o modo Stomp da Matribox II Pro.
+
+        Nesse modo, os quatro footswitches principais executam as ações
+        configuradas no preset atual, como ligar ou desligar efeitos.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_STOMP_MODE,
+            OperatingModeValue.STOMP,
+        )
 
     def tuner_on(self) -> None:
         """Liga o afinador da Matribox II Pro."""

@@ -21,6 +21,7 @@ class ControlChange(IntEnum):
     PRESET_VOLUME = 7
     EXPRESSION = 11
     EXPRESSION_1_A_B = 13
+    PRESET_STOMP_MODE = 29
     TUNER = 58
 
 
@@ -45,6 +46,21 @@ class EffectModule(IntEnum):
     MODULE_11 = 53
     MODULE_12 = 54
 
+
+class OperatingModeValue(IntEnum):
+    """
+    Valores MIDI usados para selecionar o modo de operação da pedaleira.
+
+    Segundo o manual:
+
+    - valores de 0 a 63 selecionam o modo Preset;
+    - valores de 64 a 127 selecionam o modo Stomp.
+
+    O projeto utiliza 0 e 127 para representar cada modo.
+    """
+
+    PRESET = 0
+    STOMP = 127
 
 class SwitchValue(IntEnum):
     """
