@@ -10,7 +10,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import Mock, call
 
-from matribox_midi.commands import ControlChange, EffectModule, LooperPlacementValue, OperatingModeValue, SwitchValue
+from matribox_midi.commands import ControlChange, EffectModule, LooperPlacementValue, OperatingModeValue, StompControl, SwitchValue
 from matribox_midi.controller import MatriboxController
 
 
@@ -490,6 +490,49 @@ class TestNavigationAndExpression(unittest.TestCase):
         self.midi_output.send_control_change.assert_called_once_with(
             ControlChange.EXPRESSION_1_A_B,
             SwitchValue.ON,
+        )
+
+class TestStompAndTapTempo(unittest.TestCase):
+    """Testa os controles Stomp e o Tap Tempo."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_activates_stomp_control_1(self) -> None:
+        """Ativa o primeiro controle configurável do modo Stomp."""
+        self.controller.stomp_control_on(StompControl.CONTROL_1)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            StompControl.CONTROL_1,
+            SwitchValue.ON,
+        )
+
+    def test_deactivates_stomp_control_4(self) -> None:
+        """Desativa o quarto controle configurável do modo Stomp."""
+        self.controller.stomp_control_off(StompControl.CONTROL_4)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            StompControl.CONTROL_4,
+            SwitchValue.OFF,
+        )
+
+    def test_sends_tap_tempo_press_and_release(self) -> None:
+        """Envia o pressionamento e a liberação do Tap Tempo."""
+        self.controller.tap_tempo()
+
+        self.midi_output.send_control_change.assert_has_calls(
+            [
+                call(ControlChange.TAP_TEMPO, SwitchValue.ON),
+                call(ControlChange.TAP_TEMPO, SwitchValue.OFF),
+            ]
+        )
+
+        self.assertEqual(
+            self.midi_output.send_control_change.call_count,
+            2,
         )
 
 if __name__ == "__main__":
