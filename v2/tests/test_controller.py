@@ -429,5 +429,68 @@ class TestDrumControls(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.controller.set_drum_volume(101)
 
+class TestNavigationAndExpression(unittest.TestCase):
+    """Testa a navegação e a seleção EXP1 A/B."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_moves_to_next_bank(self) -> None:
+        """Avança para o próximo banco."""
+        self.controller.bank_up()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.BANK_UP,
+            SwitchValue.ON,
+        )
+
+    def test_moves_to_previous_bank(self) -> None:
+        """Retorna para o banco anterior."""
+        self.controller.bank_down()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.BANK_DOWN,
+            SwitchValue.ON,
+        )
+
+    def test_moves_to_next_preset(self) -> None:
+        """Avança para o próximo preset."""
+        self.controller.next_preset()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.PRESET_NEXT,
+            SwitchValue.ON,
+        )
+
+    def test_moves_to_previous_preset(self) -> None:
+        """Retorna para o preset anterior."""
+        self.controller.previous_preset()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.PRESET_PREVIOUS,
+            SwitchValue.ON,
+        )
+
+    def test_selects_expression_a(self) -> None:
+        """Seleciona a configuração A do EXP1."""
+        self.controller.select_expression_a()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.EXPRESSION_1_A_B,
+            SwitchValue.OFF,
+        )
+
+    def test_selects_expression_b(self) -> None:
+        """Seleciona a configuração B do EXP1."""
+        self.controller.select_expression_b()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.EXPRESSION_1_A_B,
+            SwitchValue.ON,
+        )
+
 if __name__ == "__main__":
     unittest.main()
