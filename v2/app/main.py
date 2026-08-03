@@ -108,6 +108,61 @@ def control_tuner(controller: MatriboxController) -> None:
     else:
         print("Opção inválida.")
 
+def control_quick_access(controller: MatriboxController) -> None:
+    """Controla os três knobs Quick Access."""
+    print()
+    print("=== Quick Access ===")
+    print("1 - Definir valor exato")
+    print("2 - Aumentar 1 passo")
+    print("3 - Diminuir 1 passo")
+    print("0 - Voltar")
+
+    action = input("Escolha uma ação: ").strip()
+
+    if action == "0":
+        return
+
+    if action not in {"1", "2", "3"}:
+        print("Ação inválida.")
+        return
+
+    try:
+        knob = int(
+            input("Escolha o knob, entre 1 e 3: ").strip()
+        )
+    except ValueError:
+        print("Knob inválido. Digite apenas um número.")
+        return
+
+    if knob not in (1, 2, 3):
+        print("O knob deve ser 1, 2 ou 3.")
+        return
+
+    if action == "1":
+        try:
+            value = int(
+                input("Digite o valor, entre 0 e 100: ").strip()
+            )
+        except ValueError:
+            print("Valor inválido. Digite apenas um número.")
+            return
+
+        try:
+            controller.set_quick_access_knob(knob, value)
+        except ValueError as error:
+            print(f"Erro: {error}")
+            return
+
+        print(f"Knob {knob} definido para {value}.")
+
+    elif action == "2":
+        controller.increase_quick_access_knob(knob)
+        print(f"Knob {knob} aumentado em 1 passo.")
+
+    else:
+        controller.decrease_quick_access_knob(knob)
+        print(f"Knob {knob} diminuído em 1 passo.")
+
 def main() -> None:
     """Conecta à Matribox e executa o menu principal."""
     try:
@@ -127,21 +182,22 @@ def main() -> None:
                     print("Aplicativo encerrado.")
                     break
 
-                if option == "1":
+                elif option == "1":
                     select_preset(controller)
 
-                if option == "2":
-                    adjust_volume(controller)    
+                elif option == "2":
+                    adjust_volume(controller)
 
-                if option == "3":
+                elif option == "3":
                     define_bpm(controller)
 
-                if option == "4":
+                elif option == "4":
                     control_tuner(controller)
 
-                
+                elif option == "5":
+                    control_quick_access(controller)
 
-                elif option in {"5", "6", "7"}:
+                elif option in {"6", "7"}:
                     print(
                         "Essa opção será conectada "
                         "nas próximas etapas."
