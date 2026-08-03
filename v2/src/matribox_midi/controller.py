@@ -69,7 +69,7 @@ class MatriboxController:
 
         Args:
             program:
-                Número MIDI do programa, entre 0 e 127.
+                Número MIDI do programa, entre 0 e 100.
 
                 O número 0 representa o primeiro programa MIDI,
                 o número 1 representa o segundo, e assim por diante.
@@ -176,7 +176,7 @@ class MatriboxController:
         """
         if not 0 <= volume <= 100:
             raise ValueError(
-                "O volume do preset deve estar entre 0 e 127."
+                "O volume do preset deve estar entre 0 e 100."
             )
 
         self._midi_output.send_control_change(
