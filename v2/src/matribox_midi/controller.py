@@ -336,6 +336,73 @@ class MatriboxController:
             bpm_lsb,
         )
 
+    def looper_on(self) -> None:
+        """Abre e ativa o Looper da Matribox II Pro."""
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER,
+            SwitchValue.ON,
+        )
+
+    def looper_off(self) -> None:
+        """Fecha e desativa o Looper da Matribox II Pro."""
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER,
+            SwitchValue.OFF,
+        )
+
+    def looper_record(self) -> None:
+        """Inicia a gravação de um loop."""
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_RECORD,
+            SwitchValue.ON,
+        )
+
+    def looper_auto_record(self) -> None:
+        """
+        Prepara o Looper para iniciar a gravação automaticamente.
+
+        A gravação deve começar quando a Matribox detectar o sinal
+        do instrumento.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_AUTO_RECORD,
+            SwitchValue.ON,
+        )
+
+    def looper_play(self) -> None:
+        """Reproduz o loop gravado."""
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_PLAY_STOP,
+            SwitchValue.ON,
+        )
+
+    def looper_stop(self) -> None:
+        """Interrompe a reprodução ou gravação do loop."""
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_PLAY_STOP,
+            SwitchValue.OFF,
+        )
+
+    def looper_delete(self) -> None:
+        """Apaga a gravação atualmente armazenada no Looper."""
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_DELETE,
+            SwitchValue.ON,
+        )
+
+
+    def looper_undo_redo(self) -> None:
+        """
+        Desfaz ou refaz a última camada de overdub do Looper.
+
+        A primeira chamada desfaz a última camada adicionada.
+        Uma nova chamada refaz essa mesma camada.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_UNDO_REDO,
+            SwitchValue.ON,
+        )
+
     def tuner_on(self) -> None:
         """Liga o afinador da Matribox II Pro."""
         self._midi_output.send_control_change(

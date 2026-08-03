@@ -29,6 +29,12 @@ class ControlChange(IntEnum):
     TAP_TEMPO = 70
     PRESET_BPM_MSB = 68
     PRESET_BPM_LSB = 69
+    LOOPER = 59
+    LOOPER_RECORD = 60
+    LOOPER_PLAY_STOP = 62
+    LOOPER_DELETE = 64
+    LOOPER_UNDO_REDO = 63
+    LOOPER_AUTO_RECORD = 61
     TUNER = 58
 
 class StompControl(IntEnum):
