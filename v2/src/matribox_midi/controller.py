@@ -174,7 +174,7 @@ class MatriboxController:
             ValueError:
                 Quando o volume está fora do intervalo permitido.
         """
-        if not 0 <= volume <= 127:
+        if not 0 <= volume <= 100:
             raise ValueError(
                 "O volume do preset deve estar entre 0 e 127."
             )
@@ -199,7 +199,7 @@ class MatriboxController:
             ValueError:
                 Quando o valor está fora do intervalo permitido.
         """
-        if not 0 <= value <= 127:
+        if not 0 <= value <= 100:
             raise ValueError(
                 "O valor de expressão deve estar entre 0 e 127."
             )

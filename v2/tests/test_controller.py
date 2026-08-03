@@ -74,5 +74,42 @@ class TestPresetSelection(unittest.TestCase):
             self.controller.select_preset(1, "E")
 
 
+class TestValueRanges(unittest.TestCase):
+    """Testa os limites de volume e expressão."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_accepts_maximum_preset_volume(self) -> None:
+        """Aceita o volume máximo permitido pelo manual."""
+        self.controller.set_preset_volume(100)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.PRESET_VOLUME,
+            100,
+        )
+
+    def test_rejects_preset_volume_above_100(self) -> None:
+        """Rejeita volume acima do limite permitido."""
+        with self.assertRaises(ValueError):
+            self.controller.set_preset_volume(101)
+
+    def test_accepts_maximum_expression_value(self) -> None:
+        """Aceita o valor máximo de expressão."""
+        self.controller.set_expression(100)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.EXPRESSION,
+            100,
+        )
+
+    def test_rejects_expression_value_above_100(self) -> None:
+        """Rejeita expressão acima do limite permitido."""
+        with self.assertRaises(ValueError):
+            self.controller.set_expression(101) 
+
 if __name__ == "__main__":
     unittest.main()
