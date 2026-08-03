@@ -28,6 +28,18 @@ class ControlChange(IntEnum):
     PRESET_STOMP_MODE = 29
     TUNER = 58
 
+class StompControl(IntEnum):
+    """
+    Controles MIDI dos quatro footswitches configuráveis.
+
+    No modo Stomp, cada controle executa a ação definida no preset atual.
+    Uma ação pode controlar um ou vários módulos de efeito.
+    """
+
+    CONTROL_1 = 71
+    CONTROL_2 = 72
+    CONTROL_3 = 73
+    CONTROL_4 = 74
 
 class EffectModule(IntEnum):
     """

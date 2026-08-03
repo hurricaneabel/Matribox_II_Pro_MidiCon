@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from types import TracebackType
 
-from .commands import ControlChange, EffectModule, OperatingModeValue, SwitchValue
+from .commands import ControlChange, EffectModule, OperatingModeValue, StompControl, SwitchValue
 from .midi_output import MatriboxMidiOutput
 
 
@@ -245,6 +245,35 @@ class MatriboxController:
         self._midi_output.send_control_change(
             ControlChange.PRESET_STOMP_MODE,
             OperatingModeValue.STOMP,
+        )
+
+    def stomp_control_on(self, control: StompControl) -> None:
+        """
+        Ativa o controle configurável indicado no modo Stomp.
+
+        A ação executada depende da configuração do preset atual. Um controle
+        pode ligar um único efeito ou vários módulos ao mesmo tempo.
+
+        Args:
+            control:
+                Controle configurável, entre CONTROL_1 e CONTROL_4.
+        """
+        self._midi_output.send_control_change(
+            control,
+            SwitchValue.ON,
+        )
+
+    def stomp_control_off(self, control: StompControl) -> None:
+        """
+        Desativa o controle configurável indicado no modo Stomp.
+
+        Args:
+            control:
+                Controle configurável, entre CONTROL_1 e CONTROL_4.
+        """
+        self._midi_output.send_control_change(
+            control,
+            SwitchValue.OFF,
         )
 
     def tuner_on(self) -> None:
