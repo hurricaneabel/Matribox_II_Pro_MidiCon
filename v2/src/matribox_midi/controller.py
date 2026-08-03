@@ -165,10 +165,10 @@ class MatriboxController:
 
         Args:
             volume:
-                Valor do volume MIDI, entre 0 e 127.
+                Valor do volume MIDI, entre 0 e 100.
 
                 0 representa o volume mínimo.
-                127 representa o volume máximo.
+                100 representa o volume máximo.
 
         Raises:
             ValueError:
@@ -190,7 +190,7 @@ class MatriboxController:
 
         Args:
             value:
-                Valor MIDI entre 0 e 127.
+                Valor MIDI entre 0 e 100.
 
                 O efeito produzido depende de qual parâmetro está associado
                 ao pedal de expressão dentro do preset atual.
@@ -201,7 +201,7 @@ class MatriboxController:
         """
         if not 0 <= value <= 100:
             raise ValueError(
-                "O valor de expressão deve estar entre 0 e 127."
+                "O valor de expressão deve estar entre 0 e 100."
             )
 
         self._midi_output.send_control_change(
