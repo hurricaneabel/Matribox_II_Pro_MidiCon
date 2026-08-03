@@ -10,7 +10,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import Mock, call
 
-from matribox_midi.commands import ControlChange, EffectModule, OperatingModeValue, SwitchValue
+from matribox_midi.commands import ControlChange, EffectModule, LooperPlacementValue, OperatingModeValue, SwitchValue
 from matribox_midi.controller import MatriboxController
 
 
@@ -277,6 +277,83 @@ class TestModesEffectsAndTuner(unittest.TestCase):
         self.midi_output.send_control_change.assert_called_once_with(
             ControlChange.TUNER,
             SwitchValue.OFF,
+        )
+
+class TestLooperControls(unittest.TestCase):
+    """Testa os principais controles e limites do Looper."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_activates_looper(self) -> None:
+        """Abre e ativa o menu do Looper."""
+        self.controller.looper_on()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER,
+            SwitchValue.ON,
+        )
+
+    def test_deactivates_looper(self) -> None:
+        """Fecha e desativa o menu do Looper."""
+        self.controller.looper_off()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER,
+            SwitchValue.OFF,
+        )
+
+    def test_executes_undo_redo(self) -> None:
+        """Envia o comando de undo ou redo."""
+        self.controller.looper_undo_redo()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER_UNDO_REDO,
+            SwitchValue.ON,
+        )
+
+    def test_sets_recording_volume(self) -> None:
+        """Define o volume de gravação do Looper."""
+        self.controller.set_looper_recording_volume(60)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER_RECORDING_VOLUME,
+            60,
+        )
+
+    def test_rejects_invalid_recording_volume(self) -> None:
+        """Rejeita volume de gravação acima de 100."""
+        with self.assertRaises(ValueError):
+            self.controller.set_looper_recording_volume(101)
+
+    def test_sets_playback_volume(self) -> None:
+        """Define o volume de reprodução do Looper."""
+        self.controller.set_looper_playback_volume(70)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER_PLAYBACK_VOLUME,
+            70,
+        )
+
+    def test_selects_pre_placement(self) -> None:
+        """Posiciona o Looper antes dos efeitos."""
+        self.controller.set_looper_pre()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER_PLACEMENT,
+            LooperPlacementValue.PRE,
+        )
+
+    def test_selects_post_placement(self) -> None:
+        """Posiciona o Looper depois dos efeitos."""
+        self.controller.set_looper_post()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.LOOPER_PLACEMENT,
+            LooperPlacementValue.POST,
         )
 
 if __name__ == "__main__":
