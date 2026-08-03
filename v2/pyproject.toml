@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "matribox-midi"
+version = "0.1.0"
+description = "Biblioteca Python para enviar comandos MIDI à Matribox II Pro."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "mido==1.3.3",
+    "python-rtmidi==1.5.8",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
