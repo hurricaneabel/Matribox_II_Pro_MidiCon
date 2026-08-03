@@ -1,9 +1,10 @@
+# Ambiente virtual local
 .venv/
 venv/
+
+# Arquivos temporários do Python
 __pycache__/
 *.pyc
-bak/
-v0/
-v0.8/
-v1.0/
+
+# Registros locais
 logs/
