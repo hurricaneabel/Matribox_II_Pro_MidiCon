@@ -276,6 +276,66 @@ class MatriboxController:
             SwitchValue.OFF,
         )
 
+    def tap_tempo(self) -> None:
+        """
+        Envia uma batida do Tap Tempo para a Matribox II Pro.
+
+        O comando envia o pressionamento e a liberação do controle para que
+        chamadas consecutivas sejam reconhecidas como batidas separadas.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.TAP_TEMPO,
+            SwitchValue.ON,
+        )
+
+        self._midi_output.send_control_change(
+            ControlChange.TAP_TEMPO,
+            SwitchValue.OFF,
+        )
+
+    def set_bpm(self, bpm: int) -> None:
+        """
+        Define diretamente o BPM do preset atual.
+
+        A Matribox utiliza dois comandos MIDI para representar valores
+        entre 40 e 300 BPM:
+
+        - CC 68 envia a parte superior do valor;
+        - CC 69 envia a parte restante.
+
+        Args:
+            bpm:
+                Andamento desejado, entre 40 e 300 BPM.
+
+        Raises:
+            ValueError:
+                Quando o BPM está fora do intervalo permitido.
+        """
+        if not 40 <= bpm <= 300:
+            raise ValueError(
+                "O BPM deve estar entre 40 e 300."
+            )
+
+        if bpm <= 127:
+            bpm_msb = 0
+            bpm_lsb = bpm
+        elif bpm <= 255:
+            bpm_msb = 1
+            bpm_lsb = bpm - 128
+        else:
+            bpm_msb = 2
+            bpm_lsb = bpm - 256
+
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_BPM_MSB,
+            bpm_msb,
+        )
+
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_BPM_LSB,
+            bpm_lsb,
+        )
+
     def tuner_on(self) -> None:
         """Liga o afinador da Matribox II Pro."""
         self._midi_output.send_control_change(

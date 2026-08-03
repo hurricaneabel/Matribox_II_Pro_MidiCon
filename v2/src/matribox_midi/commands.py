@@ -26,6 +26,9 @@ class ControlChange(IntEnum):
     PRESET_NEXT = 24
     PRESET_PREVIOUS = 25
     PRESET_STOMP_MODE = 29
+    TAP_TEMPO = 70
+    PRESET_BPM_MSB = 68
+    PRESET_BPM_LSB = 69
     TUNER = 58
 
 class StompControl(IntEnum):
