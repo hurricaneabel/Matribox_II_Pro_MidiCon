@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from types import TracebackType
 
-from .commands import ControlChange, EffectModule, OperatingModeValue, StompControl, SwitchValue
+from .commands import ControlChange, EffectModule, LooperPlacementValue, OperatingModeValue, StompControl, SwitchValue
 from .midi_output import MatriboxMidiOutput
 
 
@@ -390,6 +390,72 @@ class MatriboxController:
             SwitchValue.ON,
         )
 
+
+    def set_looper_recording_volume(self, volume: int) -> None:
+        """
+        Define o volume do sinal gravado pelo Looper.
+
+        Args:
+            volume:
+                Volume de gravação entre 0 e 100.
+
+        Raises:
+            ValueError:
+                Quando o volume está fora do intervalo permitido.
+        """
+        if not 0 <= volume <= 100:
+            raise ValueError(
+                "O volume de gravação do Looper deve estar entre 0 e 100."
+            )
+
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_RECORDING_VOLUME,
+            volume,
+        )
+
+    def set_looper_playback_volume(self, volume: int) -> None:
+        """
+        Define o volume de reprodução do Looper.
+
+        Args:
+            volume:
+                Volume de reprodução entre 0 e 100.
+
+        Raises:
+            ValueError:
+                Quando o volume está fora do intervalo permitido.
+        """
+        if not 0 <= volume <= 100:
+            raise ValueError(
+                "O volume de reprodução do Looper deve estar entre 0 e 100."
+            )
+
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_PLAYBACK_VOLUME,
+            volume,
+        )
+
+    def set_looper_pre(self) -> None:
+        """
+        Posiciona o Looper antes da cadeia de efeitos.
+
+        Nesse modo, o áudio é registrado antes de passar pelos efeitos.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_PLACEMENT,
+            LooperPlacementValue.PRE,
+        )
+
+    def set_looper_post(self) -> None:
+        """
+        Posiciona o Looper depois da cadeia de efeitos.
+
+        Nesse modo, o áudio é registrado já processado pelos efeitos.
+        """
+        self._midi_output.send_control_change(
+            ControlChange.LOOPER_PLACEMENT,
+            LooperPlacementValue.POST,
+        )
 
     def looper_undo_redo(self) -> None:
         """

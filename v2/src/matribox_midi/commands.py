@@ -35,6 +35,9 @@ class ControlChange(IntEnum):
     LOOPER_DELETE = 64
     LOOPER_UNDO_REDO = 63
     LOOPER_AUTO_RECORD = 61
+    LOOPER_RECORDING_VOLUME = 65
+    LOOPER_PLAYBACK_VOLUME = 66
+    LOOPER_PLACEMENT = 67
     TUNER = 58
 
 class StompControl(IntEnum):
@@ -86,6 +89,17 @@ class OperatingModeValue(IntEnum):
 
     PRESET = 0
     STOMP = 127
+
+class LooperPlacementValue(IntEnum):
+    """
+    Valores MIDI usados para definir a posição do Looper na cadeia de sinal.
+
+    - POST grava e reproduz o sinal depois dos efeitos;
+    - PRE posiciona o Looper antes dos efeitos.
+    """
+
+    POST = 0
+    PRE = 127
 
 class SwitchValue(IntEnum):
     """
