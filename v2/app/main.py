@@ -8,6 +8,7 @@ As demais opções serão conectadas gradualmente.
 from __future__ import annotations
 
 from matribox_midi import MatriboxController
+from matribox_midi.drum_rhythms import DRUM_RHYTHMS
 
 
 def show_main_menu() -> None:
@@ -197,16 +198,29 @@ def control_drums(controller: MatriboxController) -> None:
         print("Bateria interrompida.")
 
     elif option == "5":
+        print()
+        print("=== Ritmos disponíveis ===")
+
+        for rhythm_number, rhythm_name in DRUM_RHYTHMS.items():
+            print(f"{rhythm_number:02d} - {rhythm_name}")
+
         try:
             rhythm = int(
-                input("Digite o ritmo, entre 0 e 99: ").strip()
+                input("Digite o número do ritmo: ").strip()
             )
+
             controller.set_drum_rhythm(rhythm)
+
         except ValueError as error:
             print(f"Erro: {error}")
             return
 
-        print(f"Ritmo da bateria definido para {rhythm}.")
+        rhythm_name = DRUM_RHYTHMS[rhythm]
+
+        print(
+            f"Ritmo selecionado: "
+            f"{rhythm:02d} - {rhythm_name}."
+        )
 
     elif option == "6":
         try:
