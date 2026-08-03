@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from types import TracebackType
 
-from .commands import ControlChange, SwitchValue
+from .commands import ControlChange, EffectModule, SwitchValue
 from .midi_output import MatriboxMidiOutput
 
 
@@ -74,6 +74,32 @@ class MatriboxController:
         """Desliga o afinador da Matribox II Pro."""
         self._midi_output.send_control_change(
             ControlChange.TUNER,
+            SwitchValue.OFF,
+        )
+
+    def effect_module_on(self, module: EffectModule) -> None:
+        """
+        Liga um módulo de efeito da Matribox II Pro.
+
+        Args:
+            module:
+                Módulo que deverá ser ligado, entre MODULE_1 e MODULE_12.
+        """
+        self._midi_output.send_control_change(
+            module,
+            SwitchValue.ON,
+        )
+
+    def effect_module_off(self, module: EffectModule) -> None:
+        """
+        Desliga um módulo de efeito da Matribox II Pro.
+
+        Args:
+            module:
+                Módulo que deverá ser desligado, entre MODULE_1 e MODULE_12.
+        """
+        self._midi_output.send_control_change(
+            module,
             SwitchValue.OFF,
         )
 

@@ -1,12 +1,11 @@
 """
 Constantes dos comandos MIDI documentados para a Matribox II Pro.
 
-A finalidade deste módulo é manter os números de Control Change em um único
-local. Assim, o restante do projeto não precisa espalhar números MIDI pelo
-código.
+Este módulo mantém os números MIDI centralizados, evitando que valores
+numéricos fiquem espalhados pelo projeto.
 
 Referência:
-    Manual oficial da Matribox II Pro — MIDI Control Information List.
+    Manual da Matribox II Pro — MIDI Control Information List.
 """
 
 from __future__ import annotations
@@ -16,25 +15,44 @@ from enum import IntEnum
 
 class ControlChange(IntEnum):
     """
-    Números de Control Change reconhecidos pela Matribox II Pro.
-
-    Esta lista será ampliada gradualmente conforme cada função for
-    implementada e testada no equipamento real.
+    Controles MIDI gerais reconhecidos pela Matribox II Pro.
     """
 
     TUNER = 58
 
 
+class EffectModule(IntEnum):
+    """
+    Controles MIDI dos 12 módulos de efeito da Matribox II Pro.
+
+    Cada valor representa o número de Control Change correspondente ao
+    módulo indicado.
+    """
+
+    MODULE_1 = 43
+    MODULE_2 = 44
+    MODULE_3 = 45
+    MODULE_4 = 46
+    MODULE_5 = 47
+    MODULE_6 = 48
+    MODULE_7 = 49
+    MODULE_8 = 50
+    MODULE_9 = 51
+    MODULE_10 = 52
+    MODULE_11 = 53
+    MODULE_12 = 54
+
+
 class SwitchValue(IntEnum):
     """
-    Valores padronizados usados em controles de ligar e desligar.
+    Valores utilizados para ligar e desligar funções da pedaleira.
 
     Segundo o manual:
 
     - valores de 0 a 63 representam desligado;
     - valores de 64 a 127 representam ligado.
 
-    Usamos os extremos 0 e 127 para deixar a intenção explícita.
+    O projeto utiliza 0 e 127 para tornar a intenção mais clara.
     """
 
     OFF = 0
