@@ -63,6 +63,74 @@ class MatriboxController:
         """Fecha a conexão MIDI com a Matribox."""
         self._midi_output.disconnect()
 
+    def select_program(self, program: int) -> None:
+        """
+        Seleciona um programa ou preset por meio de Program Change.
+
+        Args:
+            program:
+                Número MIDI do programa, entre 0 e 127.
+
+                O número 0 representa o primeiro programa MIDI,
+                o número 1 representa o segundo, e assim por diante.
+        """
+        self._midi_output.send_program_change(program) 
+
+
+    def select_preset(self, bank: int, preset: str) -> None:
+        """
+        Seleciona um preset utilizando o número do banco e uma letra.
+
+        Exemplos:
+            select_preset(1, "A") seleciona 01A.
+            select_preset(32, "C") seleciona 32C.
+            select_preset(60, "D") seleciona 60D.
+
+        Args:
+            bank:
+                Número do banco, entre 1 e 60.
+
+            preset:
+                Letra do preset: A, B, C ou D.
+
+        Raises:
+            ValueError:
+                Quando o banco ou a letra do preset são inválidos.
+        """
+        if not 1 <= bank <= 60:
+            raise ValueError("O banco deve estar entre 1 e 60.")
+
+        preset_name = preset.strip().upper()
+
+        preset_positions = {
+            "A": 0,
+            "B": 1,
+            "C": 2,
+            "D": 3,
+        }
+
+        if preset_name not in preset_positions:
+            raise ValueError("O preset deve ser A, B, C ou D.")
+
+        if bank <= 30:
+            bank_select = 0
+            local_bank = bank
+        else:
+            bank_select = 1
+            local_bank = bank - 30
+
+        program = (
+            ((local_bank - 1) * 4)
+            + preset_positions[preset_name]
+        )
+
+        self._midi_output.send_control_change(
+            ControlChange.BANK_SELECT,
+            bank_select,
+        )
+
+        self.select_program(program)       
+
     def tuner_on(self) -> None:
         """Liga o afinador da Matribox II Pro."""
         self._midi_output.send_control_change(

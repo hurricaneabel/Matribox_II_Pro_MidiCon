@@ -26,11 +26,6 @@ class MatriboxMidiOutput:
 
     A classe pode localizar automaticamente a porta da pedaleira ou utilizar
     um nome de porta informado manualmente.
-
-    Exemplo:
-        midi_output = MatriboxMidiOutput()
-        midi_output.connect()
-        midi_output.disconnect()
     """
 
     def __init__(self, port_name: str | None = None) -> None:
@@ -166,6 +161,56 @@ class MatriboxMidiOutput:
             channel=channel,
             control=control,
             value=value,
+        )
+
+        self._port.send(message)
+
+    def send_program_change(
+        self,
+        program: int,
+        channel: int = 0,
+    ) -> None:
+        """
+        Envia uma mensagem MIDI do tipo Program Change.
+
+        Program Change é utilizado para selecionar presets ou programas
+        armazenados no equipamento MIDI.
+
+        Args:
+            program:
+                Número do programa MIDI, entre 0 e 127.
+
+            channel:
+                Canal utilizado internamente pelo Mido, entre 0 e 15.
+                O canal 0 do Mido corresponde ao canal MIDI 1.
+
+        Raises:
+            RuntimeError:
+                Quando não existe uma conexão MIDI aberta.
+
+            ValueError:
+                Quando algum argumento está fora do intervalo permitido.
+        """
+        if self._port is None:
+            raise RuntimeError(
+                "Não existe uma conexão MIDI aberta. "
+                "Execute connect() antes de enviar comandos."
+            )
+
+        if not 0 <= program <= 127:
+            raise ValueError(
+                "O número do programa deve estar entre 0 e 127."
+            )
+
+        if not 0 <= channel <= 15:
+            raise ValueError(
+                "O canal MIDI deve estar entre 0 e 15."
+            )
+
+        message = mido.Message(
+            "program_change",
+            channel=channel,
+            program=program,
         )
 
         self._port.send(message)
