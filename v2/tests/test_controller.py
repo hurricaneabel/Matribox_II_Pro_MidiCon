@@ -8,7 +8,7 @@ comandos que o controlador tentaria enviar à pedaleira.
 from __future__ import annotations
 
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, call
 
 from matribox_midi.commands import ControlChange
 from matribox_midi.controller import MatriboxController
@@ -174,6 +174,47 @@ class TestQuickAccessKnobs(unittest.TestCase):
         """Rejeita valores absolutos acima de 100."""
         with self.assertRaises(ValueError):
             self.controller.set_quick_access_knob(1, 101)
+
+class TestTempo(unittest.TestCase):
+    """Testa a conversão do BPM para os CC 68 e 69."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_sets_120_bpm(self) -> None:
+        """Converte 120 BPM em MSB 0 e LSB 120."""
+        self.controller.set_bpm(120)
+
+        self.midi_output.send_control_change.assert_has_calls(
+            [
+                call(ControlChange.PRESET_BPM_MSB, 0),
+                call(ControlChange.PRESET_BPM_LSB, 120),
+            ]
+        )
+
+    def test_sets_200_bpm(self) -> None:
+        """Converte 200 BPM em MSB 1 e LSB 72."""
+        self.controller.set_bpm(200)
+
+        self.midi_output.send_control_change.assert_has_calls(
+            [
+                call(ControlChange.PRESET_BPM_MSB, 1),
+                call(ControlChange.PRESET_BPM_LSB, 72),
+            ]
+        )
+
+    def test_rejects_bpm_below_40(self) -> None:
+        """Rejeita BPM abaixo do limite mínimo."""
+        with self.assertRaises(ValueError):
+            self.controller.set_bpm(39)
+
+    def test_rejects_bpm_above_300(self) -> None:
+        """Rejeita BPM acima do limite máximo."""
+        with self.assertRaises(ValueError):
+            self.controller.set_bpm(301)
 
 if __name__ == "__main__":
     unittest.main()
