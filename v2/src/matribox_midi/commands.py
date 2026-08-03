@@ -21,6 +21,10 @@ class ControlChange(IntEnum):
     PRESET_VOLUME = 7
     EXPRESSION = 11
     EXPRESSION_1_A_B = 13
+    BANK_UP = 22
+    BANK_DOWN = 23
+    PRESET_NEXT = 24
+    PRESET_PREVIOUS = 25
     PRESET_STOMP_MODE = 29
     TUNER = 58
 

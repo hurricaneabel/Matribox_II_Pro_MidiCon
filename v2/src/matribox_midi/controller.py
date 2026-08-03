@@ -131,6 +131,34 @@ class MatriboxController:
 
         self.select_program(program)       
 
+    def bank_up(self) -> None:
+        """Avança para o próximo banco da Matribox II Pro."""
+        self._midi_output.send_control_change(
+            ControlChange.BANK_UP,
+            SwitchValue.ON,
+        )
+
+    def bank_down(self) -> None:
+        """Retorna para o banco anterior da Matribox II Pro."""
+        self._midi_output.send_control_change(
+            ControlChange.BANK_DOWN,
+            SwitchValue.ON,
+        )
+
+    def next_preset(self) -> None:
+        """Avança para o próximo preset."""
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_NEXT,
+            SwitchValue.ON,
+        )
+
+    def previous_preset(self) -> None:
+        """Retorna para o preset anterior."""
+        self._midi_output.send_control_change(
+            ControlChange.PRESET_PREVIOUS,
+            SwitchValue.ON,
+        )
+
     def set_preset_volume(self, volume: int) -> None:
         """
         Define o volume do preset atual.
