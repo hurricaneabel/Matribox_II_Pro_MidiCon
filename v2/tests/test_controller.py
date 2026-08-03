@@ -10,7 +10,7 @@ from __future__ import annotations
 import unittest
 from unittest.mock import Mock, call
 
-from matribox_midi.commands import ControlChange
+from matribox_midi.commands import ControlChange, EffectModule, OperatingModeValue, SwitchValue
 from matribox_midi.controller import MatriboxController
 
 
@@ -215,6 +215,69 @@ class TestTempo(unittest.TestCase):
         """Rejeita BPM acima do limite máximo."""
         with self.assertRaises(ValueError):
             self.controller.set_bpm(301)
+
+class TestModesEffectsAndTuner(unittest.TestCase):
+    """Testa modos de operação, módulos de efeito e afinador."""
+
+    def setUp(self) -> None:
+        """Cria um controlador com saída MIDI simulada."""
+        self.controller = MatriboxController()
+        self.midi_output = Mock()
+        self.controller._midi_output = self.midi_output
+
+    def test_activates_preset_mode(self) -> None:
+        """Ativa o modo Preset."""
+        self.controller.preset_mode()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.PRESET_STOMP_MODE,
+            OperatingModeValue.PRESET,
+        )
+
+    def test_activates_stomp_mode(self) -> None:
+        """Ativa o modo Stomp."""
+        self.controller.stomp_mode()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.PRESET_STOMP_MODE,
+            OperatingModeValue.STOMP,
+        )
+
+    def test_activates_effect_module_1(self) -> None:
+        """Ativa o primeiro módulo de efeito."""
+        self.controller.effect_module_on(EffectModule.MODULE_1)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            EffectModule.MODULE_1,
+            SwitchValue.ON,
+        )
+
+    def test_deactivates_effect_module_12(self) -> None:
+        """Desativa o último módulo de efeito."""
+        self.controller.effect_module_off(EffectModule.MODULE_12)
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            EffectModule.MODULE_12,
+            SwitchValue.OFF,
+        )
+
+    def test_activates_tuner(self) -> None:
+        """Ativa o afinador."""
+        self.controller.tuner_on()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.TUNER,
+            SwitchValue.ON,
+        )
+
+    def test_deactivates_tuner(self) -> None:
+        """Desativa o afinador."""
+        self.controller.tuner_off()
+
+        self.midi_output.send_control_change.assert_called_once_with(
+            ControlChange.TUNER,
+            SwitchValue.OFF,
+        )
 
 if __name__ == "__main__":
     unittest.main()
