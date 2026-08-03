@@ -8,3 +8,6 @@ __pycache__/
 
 # Registros locais
 logs/
+
+# Metadados gerados pela instalação editável
+*.egg-info/
