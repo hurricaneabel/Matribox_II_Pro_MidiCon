@@ -209,6 +209,92 @@ class MatriboxController:
             value,
         )
 
+    def set_quick_access_knob(self, knob: int, value: int) -> None:
+        """
+        Define diretamente o valor de um knob Quick Access.
+
+        Args:
+            knob:
+                Número do knob, entre 1 e 3.
+
+            value:
+                Valor desejado, entre 0 e 100.
+
+        Raises:
+            ValueError:
+                Quando o knob ou o valor são inválidos.
+        """
+        if knob not in (1, 2, 3):
+            raise ValueError(
+                "O knob Quick Access deve ser 1, 2 ou 3."
+            )
+
+        if not 0 <= value <= 100:
+            raise ValueError(
+                "O valor do knob deve estar entre 0 e 100."
+            )
+
+        value_controls = {
+            1: ControlChange.QUICK_ACCESS_KNOB_1_VALUE,
+            2: ControlChange.QUICK_ACCESS_KNOB_2_VALUE,
+            3: ControlChange.QUICK_ACCESS_KNOB_3_VALUE,
+        }
+
+        self._midi_output.send_control_change(
+            value_controls[knob],
+            value,
+        )
+
+    def increase_quick_access_knob(self, knob: int) -> None:
+        """
+        Aumenta em um passo o valor de um knob Quick Access.
+
+        Args:
+            knob:
+                Número do knob, entre 1 e 3.
+        """
+        if knob not in (1, 2, 3):
+            raise ValueError(
+                "O knob Quick Access deve ser 1, 2 ou 3."
+            )
+
+        step_controls = {
+            1: ControlChange.QUICK_ACCESS_KNOB_1_STEP,
+            2: ControlChange.QUICK_ACCESS_KNOB_2_STEP,
+            3: ControlChange.QUICK_ACCESS_KNOB_3_STEP,
+        }
+
+        # Valores entre 64 e 127 aumentam um passo.
+        self._midi_output.send_control_change(
+            step_controls[knob],
+            127,
+        )
+
+    def decrease_quick_access_knob(self, knob: int) -> None:
+        """
+        Diminui em um passo o valor de um knob Quick Access.
+
+        Args:
+            knob:
+                Número do knob, entre 1 e 3.
+        """
+        if knob not in (1, 2, 3):
+            raise ValueError(
+                "O knob Quick Access deve ser 1, 2 ou 3."
+            )
+
+        step_controls = {
+            1: ControlChange.QUICK_ACCESS_KNOB_1_STEP,
+            2: ControlChange.QUICK_ACCESS_KNOB_2_STEP,
+            3: ControlChange.QUICK_ACCESS_KNOB_3_STEP,
+        }
+
+        # Valores entre 0 e 63 diminuem um passo.
+        self._midi_output.send_control_change(
+            step_controls[knob],
+            0,
+        )
+
     def select_expression_a(self) -> None:
         """Seleciona a configuração A do pedal de expressão interno."""
         self._midi_output.send_control_change(
